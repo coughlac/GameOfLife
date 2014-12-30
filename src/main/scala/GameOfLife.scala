@@ -1,3 +1,5 @@
+import _root_.GameOfLife.Grid
+
 //
 // Problem Description [http://codingdojo.org/cgi-bin/index.pl?KataGameOfLife]
 //
@@ -11,12 +13,13 @@
 //   4. Any dead cell with exactly three live neighbours becomes a live cell.
 // You should write a program that can accept an arbitrary grid of cells, and will output a similar grid showing the next generation.
 //
-class GameOfLife(grid: List[List[Char]]) {
+
+class GameOfLife(grid: Grid) {
   val live: Char = '*'
 
   val dead: Char = '.'
 
-  def nextGeneration: List[List[Char]] = {
+  def nextGeneration: Grid = {
     val indexedGrid = grid.map(_.zipWithIndex).zipWithIndex
     indexedGrid.map {
       case (row, rowIndex) => row.map {
@@ -41,6 +44,12 @@ class GameOfLife(grid: List[List[Char]]) {
     neighbours.flatten.count(_ == live)
   }
 
-  private def neighbourExists(x: Int)(y: Int) = if (grid.isDefinedAt(x) && grid(x).isDefinedAt(y)) Some(grid(x)(y)) else None
+  private def neighbourExists(x: Int)(y: Int): Option[Char] = for{
+    row <- grid.lift(x)
+    cell <- row.lift(y)
+  } yield cell
+}
 
+object GameOfLife {
+  type Grid = List[List[Char]]
 }
